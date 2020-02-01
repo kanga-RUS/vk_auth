@@ -1,0 +1,19 @@
+{% extends 'home/home.html' %}
+
+{% block search_result %}
+    <div class="card text-left search-result">
+        {% if result.count %}
+            <ul class="list-unstyled">
+                {% for item in result.items %}
+                    {% if not item.deactivated %}
+                        <li class="list-group">
+                            <a href="https://vk.com/{{ item.domain }}">{{ item.first_name }} {{ item.last_name }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            </div>
+        {% else %}
+            <p>There is no result</p>
+        {% endif %}
+{% endblock %}

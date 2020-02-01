@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        {% for account in user.socialaccount_set.all %}
+            <div class="profile-container">
+                <div class="row">
+                    <img src="{{ account.get_avatar_url }}" class="img-circle"
+                         width="130" height="130">
+                    <h2>{{ account.extra_data.first_name }} {{ account.extra_data.last_name }}</h2>
+                    <h4>Friends count: {{ account.extra_data.counters.friends }}</h4>
+                    <a href="{% url 'account_logout' %}"
+                       class="btn btn-danger btn-md">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        Log out
+                    </a>
+                </div>
+                <div class="row">
+                    <div class="search-form">
+                        {% block search %}
+                            <form action="{% url 'search' %}" method="get"
+                                  class="form">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" class="form-control"
+                                           name="q" id="search"
+                                           placeholder="Enter a friend's name">
+                                    <span class="input-group-btn">
+                                    <button type="submit"
+                                            class="btn btn-info btn-md">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                        Search
+                                    </button>
+                                </span>
+                                </div>
+                            </form>
+                        {% endblock %}
+                        {% block search_result %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="profile-container">
+                <div class="card-body">
+                    <p class="card-text">Your account have no related social
+                        account.<br>
+                        Please log out and sign up with social account</p>
+                    <a href="{% url 'account_logout' %}"
+                       class="btn btn-danger btn-md">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        Log out
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="social-btns">
+            <a class="btn vk"
+               href="{% provider_login_url "vk" method="oauth2" %}">
+                <i class="fa fa-vk"></i>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
