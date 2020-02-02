@@ -18,7 +18,7 @@ class TestGeneral(TestCase):
 
     def test_home_page_view_not_login(self):
         resp = self.client.get('/')
-        self.assertContains(resp, '/accounts/vk/loin/')
+        self.assertContains(resp, '/accounts/vk/login/')
 
 
 class TestStaff(TestCase):
