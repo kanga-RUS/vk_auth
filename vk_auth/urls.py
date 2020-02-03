@@ -17,14 +17,16 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import handler404, handler500
 
-from vk_auth import views as vk_app_views
+from vk_auth.views import handler404, handler500, home_redirect
+
 
 urlpatterns = [
     path('', include('home.urls')),
+    path('accounts/social/login/cancelled/', home_redirect),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
 ]
 
 
-handler404 = vk_app_views.handler404
-handler500 = vk_app_views.handler500
+handler404 = handler404
+handler500 = handler500
