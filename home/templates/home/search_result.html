@@ -13,6 +13,8 @@
                 {% endfor %}
             </ul>
             </div>
+        {% elif error %}
+            <p class="alert alert-danger">{{ error }}</p>
         {% else %}
             <p>There is no result</p>
         {% endif %}

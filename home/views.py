@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from vk_api.exceptions import ApiError
 from vk_auth.settings import vk
 
 
@@ -14,7 +15,7 @@ class HomePageView(TemplateView):
         context = super().get_context_data(**kwargs)
         if not self.request.user.is_anonymous:
             self.request.session['user_vk_id'] = \
-            self.request.user.socialaccount_set.all()[0].extra_data['id']
+                self.request.user.socialaccount_set.all()[0].extra_data['id']
         return context
 
 
@@ -25,10 +26,17 @@ def search(request):
     if request.method == 'GET':
         search_text = request.GET['q']
         if search_text:
-            result = vk.friends.search(user_id=user_id,
-                                       fields='first_name,last_name,domain',
-                                       count=1000,
-                                       q=search_text)
+            try:
+                result = vk.friends.search(user_id=user_id,
+                                           fields='first_name,last_name,domain',
+                                           count=1000,
+                                           q=search_text)
+            except ApiError as e:
+                context = {'error': 'Error code #{}. {}'.format(
+                    e.code,
+                    e.error['error_msg'])}
+                return render(request, 'home/search_result.html',
+                              context=context)
     context = {'result': result}
 
     return render(request, 'home/search_result.html', context=context)
