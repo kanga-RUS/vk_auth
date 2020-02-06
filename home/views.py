@@ -1,8 +1,12 @@
+import os
+
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from vk_api.exceptions import ApiError
-from vk_auth.settings import vk
+import requests
+from requests.exceptions import ConnectionError, RequestException
+
+API_VERSION = '5.103'
 
 
 class HomePageView(TemplateView):
@@ -27,14 +31,15 @@ def search(request):
         search_text = request.GET['q']
         if search_text:
             try:
-                result = vk.friends.search(user_id=user_id,
-                                           fields='first_name,last_name,domain',
-                                           count=1000,
-                                           q=search_text)
-            except ApiError as e:
-                context = {'error': 'Error code #{}. {}'.format(
-                    e.code,
-                    e.error['error_msg'])}
+                req_str = "https://api.vk.com/method/friends.search?user_id={uid}&fields=first_name,last_name,domain&count=1000&q={q}&access_token={token}&v={api_version}".format(
+                    uid=user_id,
+                    q=search_text,
+                    token=os.environ.get('VK_TOKEN'),
+                    api_version=API_VERSION
+                )
+                result = requests.get(req_str).json().get('response')
+            except (ConnectionError, RequestException) as e:
+                context = {'error': e}
                 return render(request, 'home/search_result.html',
                               context=context)
     context = {'result': result}

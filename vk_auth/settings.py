@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
-import vk_api
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -155,9 +153,3 @@ SOCIALACCOUNT_PROVIDERS = {
              'friends',
          ], }
 }
-
-vk_session = vk_api.vk_api.VkApi(login=os.environ.get('VK_LOGIN'),
-                                 password=os.environ.get('VK_PASSWORD'),
-                                 token=os.environ.get('VK_TOKEN'))
-vk_session.auth()
-vk = vk_session.get_api()
