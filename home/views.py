@@ -43,8 +43,9 @@ def search(request):
                 context = {'error': e}
                 return render(request, 'home/search_result.html',
                               context=context)
-            if resp.status_code == 200:
-                context = {'result': resp.json().get('response')}
+            res = resp.json()
+            if resp.status_code == 200 and not res.get('error'):
+                context = {'result': res.get('response')}
             else:
-                context = {'erroe': resp.status_code}
+                context = {'error': res.get('error').get('error_msg')}
     return render(request, 'home/search_result.html', context=context)
